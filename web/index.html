@@ -1,0 +1,48 @@
+<style>
+  .loader {
+    width: 10px;
+    height: 10px;
+    border: 1px solid #0e0e0e;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: inline-block;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+  }
+  @keyframes rotation {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  button {
+    transition:  opacity .3s;
+  }
+  button:disabled {
+    opacity: .3;
+    pointer-events: none;
+    cursor: not-allowed;
+  }
+</style>
+
+<script src="https://unpkg.com/htmx.org@1.9.10"></script>
+
+<button
+
+  hx-get="https://hn.algolia.com/api/v1/search?tags=front_page"
+  hx-disabled-elt="this"
+  hx-trigger="click"
+  hx-target="#results"
+  hx-swap="innerHTML"
+  hx-indicator=".loader"
+>
+  Cargar resultados
+</button>
+
+<span class="htmx-indicator loader"></span>
+
+<ul id="results">
+  <li> Aquí iran los resultados</li>
+</ul>
