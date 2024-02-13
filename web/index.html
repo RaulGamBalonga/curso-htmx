@@ -1,4 +1,14 @@
 <style>
+  body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+      Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
+      sans-serif;
+    font-size: 18px;
+  }
+  li {
+    margin-bottom: 4px;
+    max-width: 300px;
+  }
   .loader {
     width: 10px;
     height: 10px;
@@ -18,31 +28,47 @@
     }
   }
   button {
-    transition:  opacity .3s;
+    transition: opacity 0.3s;
   }
   button:disabled {
-    opacity: .3;
+    opacity: 0.3;
     pointer-events: none;
     cursor: not-allowed;
   }
 </style>
 
 <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+<script src="https://unpkg.com/htmx.org/dist/ext/client-side-templates.js"></script>
+<script src="https://unpkg.com/mustache@latest"></script>
 
-<button
+<div hx-ext="client-side-templates">
+  <button
+    hx-get="https://hn.algolia.com/api/v1/search?tags=front_page&page=0&hitsPerPage=10"
+    hx-disabled-elt="this"
+    hx-trigger="click"
+    hx-target="#results"
+    hx-swap="innerHTML"
+    hx-indicator=".loader"
+    mustache-template="template-results"
+  >
+    Cargar resultados
+  </button>
 
-  hx-get="https://hn.algolia.com/api/v1/search?tags=front_page"
-  hx-disabled-elt="this"
-  hx-trigger="click"
-  hx-target="#results"
-  hx-swap="innerHTML"
-  hx-indicator=".loader"
->
-  Cargar resultados
-</button>
+  <span class="htmx-indicator loader"></span>
 
-<span class="htmx-indicator loader"></span>
+  <ul id="results"></ul>
 
-<ul id="results">
-  <li> Aquí iran los resultados</li>
-</ul>
+  <template id="template-results">
+    {{ #hits }}
+    <li>
+      <a href="{{ url }}">{{ title}}</a>
+    </li>
+    {{ /hits }}
+    <li
+      hx-get="/api/v1/search?tags=front_page&page=2&hitsPerPage=10"
+      hx-trigger="revealed"
+      hx-swap="outerHTML"
+      mustache-template="template-results">
+    </li>
+  </template>
+</div>
